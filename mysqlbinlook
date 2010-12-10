@@ -2,10 +2,21 @@
 
 import sys
 
+if len(sys.argv) > 1:
+	pattern = sys.argv[1]
+else:
+	pattern = None
+
 buff = []
 for line in sys.stdin.readlines():
 	if line[0] == '#' or line[0:2] == '/*' or line[0:13] == 'SET TIMESTAMP':
 		buff.append(line)
 	else:
-		print '\033[31m' + line + '\033[0m', buff
+		if pattern == None or line.find(pattern) != -1:
+			meta = buff[2].split('\t')
+			y = meta[0][1:3]
+			m = meta[0][3:5]
+			d = meta[0][5:7]
+			time = meta[0][8:16]
+			print y, m, d, time, '\033[31m' + line[:-1] + '\033[0m'
 		buff = []
